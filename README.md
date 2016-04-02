@@ -12,3 +12,7 @@ To run the app, you need:
 ## How it Works ##
 
 After you get the app running, just enter the text you want to analyze and click the **Analyze** button. The code calls the service, returns the analysis results in JSON, and displays the results in three charts. Those charts correspond to the three categories of analysis that the service does: emotion, writing/language, and social. 
+
+All the processing code is in `btnAnalyze_Click` and it uses the open source [Json.NET](http://www.newtonsoft.com/json) framework to dynamically parse and loop throught the JSON returned by the service. 
+
+![](https://github.com/dsiebold/tone-analyzer-test/blob/master/tone_analyzer_test_app.png)
