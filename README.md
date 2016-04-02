@@ -1,6 +1,6 @@
 # tone-analyzer-test #
 
-This is a simple C# Windows forms app that calls IBM's Tone Analyzer service. 
+A simple C# Windows forms app that calls IBM's Tone Analyzer service. 
 
 ## Prerequisites ##
 To run the app, you need:
