@@ -28,7 +28,7 @@ namespace ToneAnalyzerTest
 
             // Set the URL to the Tone Analyzer service and creds for the instance of the service ToneAnalyzer-tutorial-dsiebold
             // Be sure to set these vars or the text controls with the username and password of your instance of the Tone Analyzer service
-            baseURL = "https://gateway.watsonplatform.net/tone-analyzer-beta/api/v3/tone?version=2016-02-11&sentences=false";
+            baseURL = txtURL.Text;
             username = txtUsername.Text;
             password = txtPassword.Text;
 
@@ -71,7 +71,20 @@ namespace ToneAnalyzerTest
             responseFromServer = ToneAnalyzerTools.JsonPrettify(responseFromServer);
             // Display the content
             txtOutput.Text = responseFromServer;
-            
+
+            CreateChart(responseFromServer);
+
+            // Clean up the streams.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+
+
+        }
+
+
+        private void CreateChart(string responseFromServer)
+        {
             // Resets all the charts
             ResetChart();
             // Configure the chart that displays emotion scores
@@ -86,16 +99,7 @@ namespace ToneAnalyzerTest
             crtEmotion.ChartAreas["ChartArea1"].AxisY.Maximum = 1;
             crtEmotion.ChartAreas["ChartArea1"].BackColor = Color.Transparent;
 
-            // Configure the chart that displays writing scores
-            crtLanguage.Titles.Add("Language/Writing");
-            crtLanguage.Series.Add("Language");
-            crtLanguage.Series["Language"].IsVisibleInLegend = false;
-            crtLanguage.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineColor = Color.Gainsboro;
-            crtLanguage.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineColor = Color.Gainsboro;
-            crtLanguage.ChartAreas["ChartArea1"].AxisX.LineColor = Color.Gainsboro;
-            crtLanguage.ChartAreas["ChartArea1"].AxisY.LineColor = Color.Gainsboro;
-            crtLanguage.ChartAreas["ChartArea1"].AxisY.Maximum = 1;
-            crtLanguage.ChartAreas["ChartArea1"].BackColor = Color.Transparent;
+          
 
             // Configure the chart that displays social scores
             crtSocial.Titles.Add("Social");
@@ -115,7 +119,7 @@ namespace ToneAnalyzerTest
             // Dynamically assign the JSON to objects
             JObject DocumentTone = JObject.Parse(responseFromServer);
             JArray ToneCategories = (JArray)DocumentTone["document_tone"]["tone_categories"];
-            
+
             // Loop through the categories returned in the JSON
             dynamic categories = ToneCategories;
             foreach (dynamic category in categories)
@@ -131,7 +135,7 @@ namespace ToneAnalyzerTest
                 {
                     int i = 0;
                     foreach (dynamic tone in category.tones)
-                     
+
                     {
                         switch ((string)tone.tone_id)
                         {
@@ -164,14 +168,7 @@ namespace ToneAnalyzerTest
                     }
                 }
 
-                // Add the language/writing scores to the chart
-                if (category.category_id == "writing_tone")
-                {                
-                    foreach (dynamic tone in category.tones)
-                    {
-                        crtLanguage.Series["Language"].Points.AddXY((string)tone.tone_name, (double)tone.score);
-                    }
-                }
+               
 
                 // Add the social scores to the chart
                 if (category.category_id == "social_tone")
@@ -186,14 +183,11 @@ namespace ToneAnalyzerTest
             // Sort the emotion chart by emotion names; it just so happens the alphabetical order matches the priority order
             // The emotions like anger and disgust should be at the top of the chart
             crtEmotion.DataManipulator.Sort(System.Windows.Forms.DataVisualization.Charting.PointSortOrder.Descending, "AxisLabel", "Emotions");
-
-            // Clean up the streams.
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-
+            
         }
+
+
+
         private void ResetChart()
         {
             {
@@ -206,14 +200,7 @@ namespace ToneAnalyzerTest
                 crtEmotion.Titles.Clear();
                 crtEmotion.AntiAliasing = System.Windows.Forms.DataVisualization.Charting.AntiAliasingStyles.All;
 
-                crtLanguage.DataSource = null;
-                crtLanguage.Series.Clear();
-                crtLanguage.ChartAreas[0].AxisX.Interval = 0;
-                crtLanguage.ChartAreas[0].AxisX.LabelStyle.Angle = 0;
-                crtLanguage.ChartAreas[0].AxisX.CustomLabels.Clear();
-                crtLanguage.ChartAreas[0].Area3DStyle.Enable3D = false;
-                crtLanguage.Titles.Clear();
-                crtLanguage.AntiAliasing = System.Windows.Forms.DataVisualization.Charting.AntiAliasingStyles.All;
+                 
 
                 crtSocial.DataSource = null;
                 crtSocial.Series.Clear();
@@ -228,10 +215,13 @@ namespace ToneAnalyzerTest
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
-
+            txtUsername.Text = " ";
+            txtPassword.Text = " ";
+            txtURL.Text = "https://gateway.watsonplatform.net/tone-analyzer/api/v3/tone?version=2016-05-19";
+            txtInput.Text = "White man came across the sea He brought us pain and misery He killed our tribes killed our creed. He took our game for his own need We fought him hard we fought him well Out on the plains we gave him hell But many came too much for Cree Oh will we ever be set free? Riding through dust clouds and barren wastes Galloping hard on the plains. Chasing the redskins back to their holes Fighting them at their own game Murder for freedom the stab in the back Women and children are cowards attack. Run to the hills, run for your lives.";
 
         }
 
-     }
+      
+    }
 }
